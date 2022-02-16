@@ -1,6 +1,7 @@
 {
     "name": "rector-bot",
     "private": true,
+    "prettier": "@tch1b0/prettier-config",
     "scripts": {
         "build": "tsc",
         "start": "node ./dist/index.js"
