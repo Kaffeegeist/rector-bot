@@ -21,3 +21,5 @@ client.on("message", async (message) => {
 
     await commandHandler.handleCommand(client, message, PREFIX);
 });
+
+client.login(process.env.token);
