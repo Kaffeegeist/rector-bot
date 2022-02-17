@@ -1,6 +1,5 @@
 import { Client, Intents } from "discord.js";
-import Dsbmobile, { Entry, TimeTable } from "dsbmobile";
-import { OutputFileType } from "typescript";
+import commandHandler from "./commands";
 require("dotenv").config();
 
 const PREFIX = "=";
@@ -20,5 +19,5 @@ client.on("message", async (message) => {
     )
         return;
 
-    message.reply(`Du hast ${message.content} gesagt! Wie konntest du nur?`);
+    await commandHandler.handleCommand(client, message, PREFIX);
 });
