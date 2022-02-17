@@ -1,7 +1,9 @@
 import { Client, Intents } from "discord.js";
+import Dsbmobile, { Entry, TimeTable } from "dsbmobile";
+import { OutputFileType } from "typescript";
 require("dotenv").config();
 
-const PREFIX = "r!";
+const PREFIX = "=";
 const client = new Client({
     // GUILD = Discord Server
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -20,5 +22,3 @@ client.on("message", async (message) => {
 
     message.reply(`Du hast ${message.content} gesagt! Wie konntest du nur?`);
 });
-
-client.login(process.env.token);
