@@ -1,16 +1,24 @@
 import type { Client, Message } from "discord.js";
 
+export interface Command {
+    name: string;
+    description: string;
+    callback: (client: Client, message: Message) => void | Promise<void>;
+}
+
 export default class CommandHandler {
-    commands: Map<
-        string,
-        (client: Client, message: Message) => void | Promise<void>
-    > = new Map();
+    commands: Map<string, Command> = new Map();
 
     registerCommand(
         commandName: string,
+        description: string,
         callback: (client: Client, message: Message) => void | Promise<void>,
     ) {
-        this.commands.set(commandName, callback);
+        this.commands.set(commandName, {
+            name: commandName,
+            description,
+            callback,
+        });
     }
 
     async handleCommand(client: Client, message: Message, prefix: string) {
@@ -18,9 +26,9 @@ export default class CommandHandler {
         const command = message.content.replace(regex, "");
 
         if (this.commands.has(command)) {
-            await this.commands.get(command)(client, message);
+            await this.commands.get(command).callback(client, message);
         } else {
-            this.commands.get("help")(client, message);
+            this.commands.get("help").callback(client, message);
         }
     }
 }
