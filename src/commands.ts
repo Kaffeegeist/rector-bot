@@ -20,4 +20,6 @@ cmds.registerCommand(
     },
 );
 
+// make this CommandHandler instance accessible outside of this file,
+// while the object keeps containing its registered commands
 export default cmds;
