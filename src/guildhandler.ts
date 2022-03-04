@@ -25,6 +25,7 @@ export class GuildHandler {
         this.guildOptionsMap.forEach((options, guildId) => {
             serializedMap.push([guildId, options]);
         });
+        return serializedMap;
     }
 
     static fromJSON(json: any) {
