@@ -1,7 +1,9 @@
 import { MessageEmbed } from "discord.js";
 import CommandHandler from "./commandhandler";
+import { GuildHandler } from "./guildhandler";
 
 const cmds = new CommandHandler();
+const guildHandler = new GuildHandler();
 
 cmds.registerCommand(
     "help",
@@ -20,6 +22,22 @@ cmds.registerCommand(
     },
 );
 
-// make this CommandHandler instance accessible outside of this file,
-// while the object keeps containing its registered commands
-export default cmds;
+cmds.registerCommand(
+    "bind",
+    "makes this channel the main channel for the bot",
+    async (_client, message) => {
+        if (!message.channel.isText() || message.channel.isThread()) {
+            await message.reply(
+                "Dieser Kanal ist kein gewöhnlicher Text-Kanal",
+            );
+            return;
+        }
+        const options = guildHandler.getOptions(message.guild);
+        options.botChannelId = message.channelId;
+        await message.reply(
+            `<#${message.channelId}> wurde als Hauptkanal gesetzt`,
+        );
+    },
+);
+
+export { cmds, guildHandler };
