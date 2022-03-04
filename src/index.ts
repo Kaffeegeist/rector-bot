@@ -1,10 +1,11 @@
 import { Client, Intents } from "discord.js";
-import commandHandler from "./commands";
+import { cmds as commandHandler } from "./commands";
 require("dotenv").config();
 
 const PREFIX = "=";
 const client = new Client({
     // GUILD = Discord Server
+    // intent = what the bot is allowed to
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
@@ -12,7 +13,7 @@ client.on("ready", () => {
     console.log(client.user.tag);
 });
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
     if (
         message.author.id === client.user.id ||
         !message.content.toLowerCase().startsWith(PREFIX)
