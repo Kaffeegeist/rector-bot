@@ -1,22 +1,17 @@
-import { Client, Intents } from "discord.js";
-import Dsbmobile, { Entry, TimeTable } from "dsbmobile";
-import { getSyntheticLeadingComments, OutputFileType } from "typescript";
-require("dotenv").config();
+import { Message, MessageEmbed } from "discord.js";
+import { Entry } from "dsbmobile";
 
-function getChanges() {
-    async function plan() {
-        const dsb = new Dsbmobile(
-            process.env.dsbusername,
-            process.env.password,
-        );
-        await dsb.fetchToken();
+export function isDateInPast(firstDate: Date, secondDate: Date): boolean {
+    if (firstDate.setHours(0, 0, 0, 0) <= secondDate.setHours(0, 0, 0, 0))
+        return true;
 
-        let tgi11_4 = await dsb.getTimetable();
-        let entries = tgi11_4.findByClassName("TGI11/4");
-        return entries;
+    return false;
+}
+
+export async function sendEntryEmbeds(message: Message, entries: Entry[]) {
+    const embed = new MessageEmbed().setColor("YELLOW").setTitle("Vertretung");
+    for (const entry of entries) {
+        embed.addField(entry.type, entry.longOldSubject);
     }
-
-    plan().then((timeTable) => {
-        console.log(timeTable);
-    });
+    await message.channel.send({ embeds: [embed] });
 }
