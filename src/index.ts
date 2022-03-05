@@ -1,5 +1,5 @@
 import { Client, Intents } from "discord.js";
-import { cmds as commandHandler } from "./commands";
+import { cmds as commandHandler, guildHandler } from "./commands";
 require("dotenv").config();
 
 const PREFIX = "=";
