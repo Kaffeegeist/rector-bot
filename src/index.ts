@@ -1,5 +1,6 @@
 import { Client, Intents } from "discord.js";
 import { cmds as commandHandler, guildHandler } from "./commands";
+import { sendEntryEmbeds } from "./utility";
 require("dotenv").config();
 
 const PREFIX = "=";
@@ -11,6 +12,15 @@ const client = new Client({
 
 client.on("ready", () => {
     console.log(client.user.tag);
+    guildHandler.guildOptionsMap.forEach(async (options, guildId) => {
+        const guild = await client.guilds.fetch(guildId);
+        const channel = await guild.channels.fetch(options.botChannelId);
+        if (!channel.isText() || channel.isThread()) return;
+        options.scheduleHandler.onUpdate((entries) =>
+            sendEntryEmbeds(channel, entries),
+        );
+        await options.scheduleHandler.update();
+    });
 });
 
 client.on("messageCreate", async (message) => {
@@ -23,4 +33,4 @@ client.on("messageCreate", async (message) => {
     await commandHandler.handleCommand(client, message, PREFIX);
 });
 
-client.login(process.env.token);
+client.login(process.env.TOKEN);
