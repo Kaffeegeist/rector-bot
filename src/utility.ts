@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed, NewsChannel, TextChannel } from "discord.js";
 import { Entry } from "dsbmobile";
 
 export function isDateInPast(firstDate: Date, secondDate: Date): boolean {
@@ -8,10 +8,31 @@ export function isDateInPast(firstDate: Date, secondDate: Date): boolean {
     return false;
 }
 
-export async function sendEntryEmbeds(message: Message, entries: Entry[]) {
-    const embed = new MessageEmbed().setColor("YELLOW").setTitle("Vertretung");
+export async function sendEntryEmbeds(
+    channel: TextChannel | NewsChannel,
+    entries: Entry[],
+) {
+    const dates: Date[] = [];
     for (const entry of entries) {
-        embed.addField(entry.type, entry.longOldSubject);
+        if (!dates.some((d) => d.toString() === entry.date.toString())) {
+            dates.push(entry.date);
+        }
     }
-    await message.channel.send({ embeds: [embed] });
+    const embed = new MessageEmbed()
+        .setColor("YELLOW")
+        .setTitle("Neue Änderungen");
+
+    for (const date of dates) {
+        let text = "";
+        let day = "";
+        for (const entry of entries.filter(
+            (entry) => entry.date.toString() === date.toString(),
+        )) {
+            text += `${entry.period}. Stunde - ${entry.type}\n`;
+            day = entry.day;
+        }
+        embed.addField(`${date.toLocaleDateString()}, ${day}`, text);
+    }
+
+    await channel.send({ embeds: [embed] });
 }

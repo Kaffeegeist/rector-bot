@@ -5,7 +5,7 @@ import { ScheduleHandler } from "./handlers/schedulehandler";
 import { sendEntryEmbeds } from "./utility";
 
 const cmds = new CommandHandler();
-const guildHandler = new GuildHandler();
+const guildHandler = GuildHandler.load() || new GuildHandler();
 
 cmds.registerCommand(
     "help",
@@ -26,29 +26,51 @@ cmds.registerCommand(
 
 cmds.registerCommand(
     "bind",
-    "macht den Kanal in dem es geschrieben wurde zum Hauptkanal für diesen Bot",
+    "setzt diesen Kanal als Hauptkanal für diesen Bot",
     async (_client, message) => {
         if (!message.channel.isText() || message.channel.isThread()) {
             await message.reply(
-                "Dieser Kanal ist kein gewöhnlicher Text-Kanal",
+                ":x: Dieser Kanal ist kein gewöhnlicher Text-Kanal",
             );
+            return;
+        } else if (
+            guildHandler.getOptions(message.guildId).botChannelId ===
+            message.channelId
+        ) {
+            await message.reply(":x: Dieser Kanal ist bereits gesetzt");
             return;
         }
         const options = guildHandler.getOptions(message.guildId);
         options.botChannelId = message.channelId;
-        options.scheduleHandler = new ScheduleHandler(
+        options.scheduleHandler ??= new ScheduleHandler(
             process.env.DSB_USERNAME,
             process.env.DSB_PASSWORD,
             "TGI11/4",
         );
         options.scheduleHandler.updateCallback = async (entries) => {
-            await sendEntryEmbeds(message, entries);
+            // @ts-ignore
+            await sendEntryEmbeds(message.channel, entries);
         };
         guildHandler.setOptions(message.guildId, options);
         await options.scheduleHandler.update();
         await message.reply(
-            `<#${message.channelId}> wurde als Hauptkanal gesetzt`,
+            `:white_check_mark: <#${message.channelId}> wurde als Hauptkanal gesetzt`,
         );
+    },
+);
+
+cmds.registerCommand(
+    "unbind",
+    "entfernt diesen Kanal",
+    async (_client, message) => {
+        if (!guildHandler.guildOptionsMap.has(message.guildId)) {
+            await message.reply(
+                ":x: Es wurde kreu kein Kanal gesetzt. Rufe `/help` auf für Hilfe",
+            );
+            return;
+        }
+        guildHandler.removeGuild(message.guildId);
+        await message.reply(":white_check_mark:");
     },
 );
 

@@ -1,5 +1,6 @@
 import Dsbmobile, { Entry } from "dsbmobile";
 import { isDateInPast } from "../utility";
+import { GuildHandler } from "./guildhandler";
 
 type updateCallbackType = (entries: Entry[]) => void | Promise<void>;
 
@@ -12,6 +13,8 @@ export class ScheduleHandler {
     previousEntries: Entry[] = [];
     updateCallback: updateCallbackType;
     className: string;
+    parent: GuildHandler;
+    private intervalId: NodeJS.Timer;
 
     constructor(dsbUsername: string, dsbPassword: string, className: string);
     constructor(dsb: Dsbmobile, className: string);
@@ -31,7 +34,12 @@ export class ScheduleHandler {
         }
 
         // update every 15 minutes
-        setInterval(async () => await this.update(), 15 * 60 * 1000);
+        this.intervalId = setInterval(
+            async () => await this.update(),
+            5 * 60 * 1000,
+        );
+
+        // run initially
         this.update();
     }
 
@@ -43,8 +51,8 @@ export class ScheduleHandler {
     }
 
     async update() {
+        console.log(this.previousEntries);
         this.cleanPreviousEntries();
-        console.log(this.dsb);
         const timeTable = await this.dsb.getTimetable();
         const entries = timeTable.findByClassName(this.className);
         const newEntries = entries.filter(
@@ -56,10 +64,15 @@ export class ScheduleHandler {
 
         this.updateCallback([...newEntries]);
         this.previousEntries = this.previousEntries.concat([...newEntries]);
+        this.parent.save();
     }
 
     onUpdate(callback: updateCallbackType) {
         this.updateCallback = callback;
+    }
+
+    destroy() {
+        clearInterval(this.intervalId);
     }
 
     toJSON() {
@@ -72,12 +85,19 @@ export class ScheduleHandler {
         };
     }
 
-    static fromJSON(json: object) {
+    static fromJSON(json: object, parent?: GuildHandler) {
         const dsb = Dsbmobile.fromJSON(json["dsb"]);
         const scheduleHandler = new ScheduleHandler(dsb, json["class-name"]);
+        json["previous-entries"] = json["previous-entries"].map(
+            (entry: object) => {
+                entry["date"] = new Date(entry["date"]);
+                return entry;
+            },
+        );
         scheduleHandler.previousEntries = json["previous-entries"].map(
             (entry: object) => Entry.fromJSON(entry),
         );
+        scheduleHandler.parent = parent;
         return scheduleHandler;
     }
 }
