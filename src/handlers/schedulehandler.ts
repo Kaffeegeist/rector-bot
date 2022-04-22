@@ -1,6 +1,5 @@
 import Dsbmobile, { Entry } from "dsbmobile";
 import { isDateInPast } from "../utility";
-import { GuildHandler } from "./guildhandler";
 
 type updateCallbackType = (entries: Entry[]) => void | Promise<void>;
 
@@ -11,9 +10,8 @@ function secureCompareEntry(e1: Entry, e2: Entry) {
 export class ScheduleHandler {
     private readonly dsb: Dsbmobile;
     previousEntries: Entry[] = [];
-    updateCallback: updateCallbackType;
+    updateCallbacks: updateCallbackType[] = [];
     className: string;
-    parent: GuildHandler;
     private intervalId: NodeJS.Timer;
 
     constructor(dsbUsername: string, dsbPassword: string, className: string);
@@ -40,6 +38,7 @@ export class ScheduleHandler {
         );
 
         // run initially
+        // TODO: Remove this
         this.update();
     }
 
@@ -62,13 +61,12 @@ export class ScheduleHandler {
                 ),
         );
 
-        this.updateCallback([...newEntries]);
         this.previousEntries = this.previousEntries.concat([...newEntries]);
-        this.parent.save();
+        this.updateCallbacks.forEach((f) => f([...newEntries]));
     }
 
     onUpdate(callback: updateCallbackType) {
-        this.updateCallback = callback;
+        this.updateCallbacks.push(callback);
     }
 
     destroy() {
@@ -85,7 +83,7 @@ export class ScheduleHandler {
         };
     }
 
-    static fromJSON(json: object, parent?: GuildHandler) {
+    static fromJSON(json: object) {
         const dsb = Dsbmobile.fromJSON(json["dsb"]);
         const scheduleHandler = new ScheduleHandler(dsb, json["class-name"]);
         json["previous-entries"] = json["previous-entries"].map(
@@ -97,7 +95,6 @@ export class ScheduleHandler {
         scheduleHandler.previousEntries = json["previous-entries"].map(
             (entry: object) => Entry.fromJSON(entry),
         );
-        scheduleHandler.parent = parent;
         return scheduleHandler;
     }
 }

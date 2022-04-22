@@ -47,10 +47,10 @@ cmds.registerCommand(
             process.env.DSB_PASSWORD,
             "TGI11/4",
         );
-        options.scheduleHandler.updateCallback = async (entries) => {
+        options.scheduleHandler.onUpdate(async (entries) => {
             // @ts-ignore
             await sendEntryEmbeds(message.channel, entries);
-        };
+        });
         guildHandler.setOptions(message.guildId, options);
         await options.scheduleHandler.update();
         await message.reply(
@@ -65,7 +65,7 @@ cmds.registerCommand(
     async (_client, message) => {
         if (!guildHandler.guildOptionsMap.has(message.guildId)) {
             await message.reply(
-                ":x: Es wurde kreu kein Kanal gesetzt. Rufe `/help` auf für Hilfe",
+                ":x: Es wurde kein Kanal gesetzt. Rufe `/help` auf für Hilfe",
             );
             return;
         }

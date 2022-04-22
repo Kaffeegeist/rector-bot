@@ -22,8 +22,6 @@ export class GuildHandler {
     }
 
     setOptions(guildId: string, options: GuildOptions) {
-        if (options.scheduleHandler !== undefined)
-            options.scheduleHandler.parent = this;
         this.guildOptionsMap.set(guildId, options);
         this.save();
     }
@@ -44,13 +42,9 @@ export class GuildHandler {
     }
 
     static load() {
-        return !existsSync(GuildHandler.filePath)
+        return !existsSync(this.filePath)
             ? null
-            : this.fromJSON(
-                  JSON.parse(
-                      readFileSync("./data/guild-options.json").toString(),
-                  ),
-              );
+            : this.fromJSON(JSON.parse(readFileSync(this.filePath).toString()));
     }
 
     toJSON() {
@@ -74,7 +68,6 @@ export class GuildHandler {
             {
                 scheduleHandler: ScheduleHandler.fromJSON(
                     options.scheduleHandler,
-                    guildHandler,
                 ),
                 botChannelId: options["bot-channel-id"],
             } as GuildOptions,
