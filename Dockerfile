@@ -21,6 +21,7 @@ RUN npm ci
 RUN npm run build
 # move the output outside the /building directory
 RUN mv ./dist ../dist
+RUN mv ./node_modules ../node_modules
 # delete the /building directory
 WORKDIR /app
 RUN rm -rf ./building
