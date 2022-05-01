@@ -5,6 +5,7 @@
     <img src="https://img.shields.io/github/workflow/status/Kaffeegeist/rector-bot/ci?label=ci">
     <p>A discord bot for staying up to date with the <a href="https://dsbmobile.de">dsbmobile</a> substitution plan</p>
 </div>
+
 ## Setting up
 
 ### Using [docker](https://docker.com)
