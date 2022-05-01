@@ -1,6 +1,8 @@
-import { Client, Intents } from "discord.js";
+import { Client, Intents, Options } from "discord.js";
 import { commandHandler, guildHandler } from "./commands";
 import { sendEntryEmbeds } from "./commands";
+import { GuildOptions } from "./handlers/guildhandler";
+import { serializeCommands } from "./utility";
 require("dotenv").config();
 
 const client = new Client({
@@ -12,13 +14,7 @@ const client = new Client({
 client.on("ready", () => {
     console.log(`Now logged in as ${client.user.tag}`);
 
-    // serialize the commands to be able to present them as slash commands
-    const serializedCommands = Array.from(
-        commandHandler.commands.entries(),
-    ).map(([_, cmd]) => ({
-        name: cmd.name,
-        description: cmd.description,
-    }));
+    const serializedCommands = serializeCommands(commandHandler);
 
     guildHandler.guildOptionsMap.forEach(async (options, guildId) => {
         const guild = await client.guilds.fetch(guildId);
@@ -44,6 +40,19 @@ client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) return;
 
     commandHandler.handleCommand(client, interaction);
+});
+
+client.on("guildCreate", (guild) => {
+    // register the slash commands
+    for (const cmd of serializeCommands(commandHandler)) {
+        console.log(cmd);
+        guild.commands.create(cmd);
+    }
+});
+
+client.on("guildDelete", (guild) => {
+    // remove the guild from the guild handler
+    guildHandler.removeGuild(guild.id);
 });
 
 client.login(process.env.BOT_TOKEN);

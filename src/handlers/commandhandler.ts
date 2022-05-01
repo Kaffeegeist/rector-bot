@@ -22,7 +22,7 @@ export interface Command {
 /**
  * registers and handels commands
  */
-export default class CommandHandler {
+export class CommandHandler {
     /**
      * the collection of commands
      */
