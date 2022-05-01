@@ -11,7 +11,7 @@ const client = new Client({
 });
 
 client.on("ready", () => {
-    console.log(client.user.tag);
+    console.log(`Now logged in as ${client.user.tag}`);
     guildHandler.guildOptionsMap.forEach(async (options, guildId) => {
         const guild = await client.guilds.fetch(guildId);
         const channel = await guild.channels.fetch(options.botChannelId);
