@@ -25,4 +25,4 @@ RUN mv ./dist ../dist
 WORKDIR /app
 RUN rm -rf ./building
 
-CMD ["npm", "start"]
+CMD ["node", "./dist/index.js"]
