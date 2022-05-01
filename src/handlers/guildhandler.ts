@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync, existsSync } from "node:fs";
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { ScheduleHandler } from "./schedulehandler";
 
 export interface GuildOptions {
@@ -7,12 +7,13 @@ export interface GuildOptions {
 }
 
 export class GuildHandler {
-    static filePath: string = "./data/guild-options.json";
+    static dataDirPath = "./data";
+    static filePath = `${this.dataDirPath}/guild-options.json`;
     guildOptionsMap: Map<string, GuildOptions> = new Map();
 
     addGuild(guildId: string, config: GuildOptions = {}): void {
-        this.guildOptionsMap.set(guildId, config);
-        this.save();
+        config.scheduleHandler.onUpdate(() => this.save());
+        this.setOptions(guildId, config);
     }
 
     removeGuild(guildId: string): void {
@@ -38,10 +39,14 @@ export class GuildHandler {
     }
 
     save() {
+        if (!existsSync(GuildHandler.dataDirPath))
+            mkdirSync(GuildHandler.dataDirPath);
+
         writeFileSync(GuildHandler.filePath, JSON.stringify(this.toJSON()));
     }
 
     static load() {
+        console.log(`${this.filePath} exists? ${existsSync(this.filePath)}`);
         return !existsSync(this.filePath)
             ? null
             : this.fromJSON(JSON.parse(readFileSync(this.filePath).toString()));
@@ -73,7 +78,9 @@ export class GuildHandler {
             } as GuildOptions,
         ]);
         guildHandler.guildOptionsMap = new Map(json);
-        console.log(json);
+        guildHandler.guildOptionsMap.forEach((options, _guildId) => {
+            options.scheduleHandler.onUpdate(() => guildHandler.save());
+        });
         return guildHandler;
     }
 }

@@ -52,10 +52,10 @@ cmds.registerCommand(
             await sendEntryEmbeds(message.channel, entries);
         });
         guildHandler.setOptions(message.guildId, options);
-        await options.scheduleHandler.update();
         await message.reply(
             `:white_check_mark: <#${message.channelId}> wurde als Hauptkanal gesetzt`,
         );
+        await options.scheduleHandler.update();
     },
 );
 

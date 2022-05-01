@@ -3,8 +3,12 @@ import { isDateInPast } from "../utility";
 
 type updateCallbackType = (entries: Entry[]) => void | Promise<void>;
 
-function secureCompareEntry(e1: Entry, e2: Entry) {
-    return JSON.stringify(e1.toJSON()) === JSON.stringify(e2.toJSON());
+function entryEquals(e1: Entry, e2: Entry) {
+    return (
+        e1.description === e2.description &&
+        e1.day === e2.day &&
+        e1.period === e2.period
+    );
 }
 
 export class ScheduleHandler {
@@ -32,40 +36,35 @@ export class ScheduleHandler {
         }
 
         // update every 15 minutes
-        this.intervalId = setInterval(
-            async () => await this.update(),
-            5 * 60 * 1000,
-        );
-
-        // run initially
-        // TODO: Remove this
-        this.update();
+        this.intervalId = setInterval(() => this.update(), 5 * 60 * 1000);
     }
 
     cleanPreviousEntries() {
-        const now = new Date();
+        // Subtract a week from unix time
+        const now = Date.now() - 7 * 24 * 60 * 60 * 1000;
         this.previousEntries = this.previousEntries.filter(
-            (entry) => !isDateInPast(entry.date, now),
+            (entry) => !isDateInPast(entry.date, new Date(now)),
         );
     }
 
     async update() {
-        console.log(this.previousEntries);
         this.cleanPreviousEntries();
         const timeTable = await this.dsb.getTimetable();
-        const entries = timeTable.findByClassName(this.className);
-        const newEntries = entries.filter(
-            (newEntry) =>
-                !this.previousEntries.some((prevEntry) =>
-                    secureCompareEntry(newEntry, prevEntry),
-                ),
-        );
+        const entries: Entry[] = timeTable.findByClassName(this.className);
+        const newEntries = entries.filter((newEntry) => {
+            return !this.previousEntries.some((prevEntry) =>
+                entryEquals(newEntry, prevEntry),
+            );
+        });
+
+        if (newEntries.length === 0) return;
 
         this.previousEntries = this.previousEntries.concat([...newEntries]);
         this.updateCallbacks.forEach((f) => f([...newEntries]));
     }
 
     onUpdate(callback: updateCallbackType) {
+        console.log("HERE");
         this.updateCallbacks.push(callback);
     }
 
@@ -86,12 +85,6 @@ export class ScheduleHandler {
     static fromJSON(json: object) {
         const dsb = Dsbmobile.fromJSON(json["dsb"]);
         const scheduleHandler = new ScheduleHandler(dsb, json["class-name"]);
-        json["previous-entries"] = json["previous-entries"].map(
-            (entry: object) => {
-                entry["date"] = new Date(entry["date"]);
-                return entry;
-            },
-        );
         scheduleHandler.previousEntries = json["previous-entries"].map(
             (entry: object) => Entry.fromJSON(entry),
         );
