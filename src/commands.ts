@@ -1,11 +1,47 @@
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, NewsChannel, TextChannel } from "discord.js";
+import { Entry } from "dsbmobile";
+import { BOT_NAME, CONTRIBUTORS, PREFIX } from "./constants";
 import CommandHandler from "./handlers/commandhandler";
 import { GuildHandler } from "./handlers/guildhandler";
 import { ScheduleHandler } from "./handlers/schedulehandler";
-import { sendEntryEmbeds } from "./utility";
 
 const cmds = new CommandHandler();
 const guildHandler = GuildHandler.load() || new GuildHandler();
+
+export async function sendEntryEmbeds(
+    channel: TextChannel | NewsChannel,
+    entries: Entry[],
+) {
+    const dates: Date[] = [];
+    for (const entry of entries) {
+        if (!dates.some((d) => d.toString() === entry.date.toString())) {
+            dates.push(entry.date);
+        }
+    }
+    const embed = new MessageEmbed()
+        .setColor("YELLOW")
+        .setTitle("Neue Änderungen")
+        .setTimestamp(new Date());
+
+    for (const date of dates) {
+        let text = "";
+        let day = "";
+        for (const entry of entries.filter(
+            (entry) => entry.date.toString() === date.toString(),
+        )) {
+            text += `${entry.period}. Stunde - ${entry.type}\n`;
+            day = entry.day;
+        }
+        const [numDay, month] = date
+            .toLocaleDateString("de-DE", {
+                month: "long",
+                day: "2-digit",
+            })
+            .split(".");
+        embed.addField(`${day}, ${numDay}. ${month}`, text, true);
+    }
+    await channel.send({ embeds: [embed] });
+}
 
 cmds.registerCommand(
     "help",
@@ -26,7 +62,7 @@ cmds.registerCommand(
 
 cmds.registerCommand(
     "bind",
-    "setzt diesen Kanal als Hauptkanal für diesen Bot",
+    `setzt diesen Kanal als Hauptkanal für ${BOT_NAME}`,
     async (_client, message) => {
         if (!message.channel.isText() || message.channel.isThread()) {
             await message.reply(
@@ -60,12 +96,29 @@ cmds.registerCommand(
 );
 
 cmds.registerCommand(
+    "bound",
+    "zeigt den aktuellen Hauptkanal an",
+    async (_client, message) => {
+        const options = guildHandler.getOptions(message.guildId);
+        if (options.botChannelId) {
+            await message.reply(
+                `<#${options.botChannelId}> ist der Hauptkanal`,
+            );
+        } else {
+            await message.reply(
+                `Es ist kein Hauptkanal gesetzt. Benutze \`${PREFIX}bind\` um ihn zu setzen`,
+            );
+        }
+    },
+);
+
+cmds.registerCommand(
     "unbind",
     "entfernt diesen Kanal",
     async (_client, message) => {
         if (!guildHandler.guildOptionsMap.has(message.guildId)) {
             await message.reply(
-                ":x: Es wurde kein Kanal gesetzt. Rufe `/help` auf für Hilfe",
+                `:x: Es wurde kein Kanal gesetzt. Rufe \`${PREFIX}help\` auf für Hilfe`,
             );
             return;
         }
@@ -74,4 +127,26 @@ cmds.registerCommand(
     },
 );
 
-export { cmds, guildHandler };
+cmds.registerCommand(
+    "about",
+    `zeigt Informationen über ${BOT_NAME} an`,
+    async (_client, message) => {
+        // create a new embed
+        const embed = new MessageEmbed()
+            .setColor("LUMINOUS_VIVID_PINK")
+            .setTitle("Über")
+            .addField(
+                "Entwickler",
+                Array.from(CONTRIBUTORS.entries())
+                    .map(([name, link]) => `**${name}**: ${link}`)
+                    .join("\n"),
+            )
+            .addField(
+                "Quellcode auf GitHub",
+                "https://github.com/Kaffeegeist/rector-bot",
+            );
+        message.channel.send({ embeds: [embed] });
+    },
+);
+
+export { cmds as commandHandler, guildHandler };
