@@ -4,7 +4,27 @@ A discord bot for pushing new notifications about our timetable
 
 ## Setting up
 
-Create `.env` file in project root and create a `token` variable with the token as the value
+### Using [docker](https://docker.com)
+
+`docker-compose.yml`
+
+```yml
+version: "3.8"
+
+services:
+    server:
+        image: tch1b0/rector:latest
+        environment:
+            - BOT_TOKEN=<YOUR DISCORD BOT TOKEN>
+            - DSB_USERNAME=<YOUR DSBmobile USERNAME>
+            - DSB_PASSWORD=<YOUR DSBmobile USERNAME>
+        ports:
+            - "<YOUR PORT>:3000"
+
+        # optionally for data consistency:
+        volumes:
+            - "./data:/app/data"
+```
 
 ## npm scripts
 
