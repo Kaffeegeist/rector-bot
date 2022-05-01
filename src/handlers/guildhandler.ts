@@ -1,4 +1,6 @@
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
+import { commandHandler } from "../commands";
+import { serializeCommands } from "../utility";
 import { ScheduleHandler } from "./schedulehandler";
 
 /**
@@ -22,7 +24,7 @@ export class GuildHandler {
      * @param config the configuration of the guild
      */
     addGuild(guildId: string, config: GuildOptions = {}): void {
-        config.scheduleHandler.onUpdate(() => this.save());
+        config.scheduleHandler?.onUpdate(() => this.save());
         this.setOptions(guildId, config);
     }
 
@@ -31,6 +33,7 @@ export class GuildHandler {
      * @param guildId the id of the guild
      */
     removeGuild(guildId: string): void {
+        if (!this.guildOptionsMap.has(guildId)) return;
         this.getOptions(guildId, false)?.scheduleHandler.destroy();
         this.guildOptionsMap.delete(guildId);
         this.save();
@@ -42,6 +45,15 @@ export class GuildHandler {
      * @param options the options to set
      */
     setOptions(guildId: string, options: GuildOptions) {
+        const oldOptions = this.getOptions(guildId, false);
+        if (
+            oldOptions !== null &&
+            oldOptions.scheduleHandler !== undefined &&
+            options.scheduleHandler !== undefined
+        ) {
+            options.scheduleHandler.onUpdate(() => this.save());
+        }
+
         this.guildOptionsMap.set(guildId, options);
         this.save();
     }

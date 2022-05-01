@@ -1,7 +1,7 @@
 import { MessageEmbed, NewsChannel, TextChannel } from "discord.js";
 import { Entry } from "dsbmobile";
 import { BOT_NAME, CONTRIBUTORS, PREFIX } from "./constants";
-import CommandHandler from "./handlers/commandhandler";
+import { CommandHandler } from "./handlers/commandhandler";
 import { GuildHandler } from "./handlers/guildhandler";
 import { ScheduleHandler } from "./handlers/schedulehandler";
 
@@ -35,7 +35,7 @@ export async function sendEntryEmbeds(
     // iterate over each date
     for (const date of dates) {
         let text = "";
-        let dayName = "";
+        let dayName = entries[0].day;
 
         // add the entries of the date to the text
         for (const entry of entries.filter(
