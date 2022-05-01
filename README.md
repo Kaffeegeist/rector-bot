@@ -12,7 +12,7 @@ A discord bot for pushing new notifications about our timetable
 version: "3.8"
 
 services:
-    server:
+    rector-bot:
         image: tch1b0/rector:latest
         environment:
             - BOT_TOKEN=<YOUR DISCORD BOT TOKEN>
