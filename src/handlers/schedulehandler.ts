@@ -57,12 +57,9 @@ export class ScheduleHandler {
      * removes all entries that are in the past
      */
     cleanPreviousEntries() {
-        // subtract a week from unix time
-        const now = Date.now() - 7 * 24 * 60 * 60 * 1000;
-
         // remove entries that are in the past
         this.previousEntries = this.previousEntries.filter(
-            (entry) => !isDateInPast(entry.date, new Date(now)),
+            (entry) => !isDateInPast(entry.date, new Date()),
         );
     }
 
