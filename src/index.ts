@@ -1,8 +1,6 @@
-import {} from "discord.js";
 import { Client, Intents } from "discord.js";
 import { commandHandler, guildHandler } from "./commands";
 import { sendEntryEmbeds } from "./commands";
-import { PREFIX } from "./constants";
 require("dotenv").config();
 
 const client = new Client({
@@ -13,6 +11,12 @@ const client = new Client({
 
 client.on("ready", () => {
     console.log(`Now logged in as ${client.user.tag}`);
+    const serializedCommands = Array.from(
+        commandHandler.commands.entries(),
+    ).map(([_, cmd]) => ({
+        name: cmd.name,
+        description: cmd.description,
+    }));
     guildHandler.guildOptionsMap.forEach(async (options, guildId) => {
         const guild = await client.guilds.fetch(guildId);
         const channel = await guild.channels.fetch(options.botChannelId);
@@ -21,17 +25,17 @@ client.on("ready", () => {
             sendEntryEmbeds(channel, entries),
         );
         await options.scheduleHandler.update();
+        for (const command of serializedCommands) {
+            // check whether the command is already registered
+            await guild.commands.create(command);
+        }
     });
 });
 
-client.on("messageCreate", async (message) => {
-    if (
-        message.author.id === client.user.id ||
-        !message.content.toLowerCase().startsWith(PREFIX)
-    )
-        return;
+client.on("interactionCreate", async (interaction) => {
+    if (!interaction.isCommand()) return;
 
-    await commandHandler.handleCommand(client, message, PREFIX);
+    commandHandler.handleCommand(client, interaction);
 });
 
 client.login(process.env.BOT_TOKEN);
