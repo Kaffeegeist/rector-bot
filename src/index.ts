@@ -1,9 +1,10 @@
+import {} from "discord.js";
 import { Client, Intents } from "discord.js";
-import { cmds as commandHandler, guildHandler } from "./commands";
-import { sendEntryEmbeds } from "./utility";
+import { commandHandler, guildHandler } from "./commands";
+import { sendEntryEmbeds } from "./commands";
+import { PREFIX } from "./constants";
 require("dotenv").config();
 
-const PREFIX = "=";
 const client = new Client({
     // GUILD = Discord Server
     // intent = what the bot is allowed to

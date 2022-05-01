@@ -12,7 +12,9 @@ function entryEquals(e1: Entry, e2: Entry) {
 }
 
 export class ScheduleHandler {
-    private readonly dsb: Dsbmobile;
+    // the dsb instance used to fetch the timetable
+    private dsb: Dsbmobile;
+
     previousEntries: Entry[] = [];
     updateCallbacks: updateCallbackType[] = [];
     className: string;
@@ -64,7 +66,6 @@ export class ScheduleHandler {
     }
 
     onUpdate(callback: updateCallbackType) {
-        console.log("HERE");
         this.updateCallbacks.push(callback);
     }
 

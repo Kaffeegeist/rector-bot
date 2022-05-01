@@ -46,7 +46,6 @@ export class GuildHandler {
     }
 
     static load() {
-        console.log(`${this.filePath} exists? ${existsSync(this.filePath)}`);
         return !existsSync(this.filePath)
             ? null
             : this.fromJSON(JSON.parse(readFileSync(this.filePath).toString()));
