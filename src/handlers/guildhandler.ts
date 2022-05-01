@@ -80,7 +80,7 @@ export class GuildHandler {
     static load() {
         return !existsSync(this.filePath)
             ? null
-            : this.fromJSON(readFileSync(this.filePath).toJSON());
+            : this.fromJSON(JSON.parse(readFileSync(this.filePath).toString()));
     }
 
     toJSON() {
