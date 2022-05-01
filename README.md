@@ -1,9 +1,10 @@
 <div align="center">
-    <img src="./media/icon.png" width="300px" style="border-radius: 50%; border: 5px solid black;">
-    <h1>rector bot</h1>
-    <p>A discord bot for pushing new notifications about [our](https://github.com/Kaffeegeist) timetable</p>
+    <img src="./media/icon.png" width="300px">
+    <h1>Rector</h1>
+    <img src="https://img.shields.io/github/license/Kaffeegeist/rector-bot">
+    <img src="https://img.shields.io/github/workflow/status/Kaffeegeist/rector-bot/ci?label=ci">
+    <p>A discord bot for staying up to date with the <a href="https://dsbmobile.de">dsbmobile</a> substitution plan</p>
 </div>
-
 ## Setting up
 
 ### Using [docker](https://docker.com)
@@ -50,7 +51,7 @@ CLASS_NAME
 $ npm ci
 ```
 
-```
+```bash
 $ npm run br
 ```
 
@@ -64,8 +65,11 @@ Usage: `npm run <script>`
 -   `start`
     runs the compiled project
 
+-   `br`
+    builds and runs the project
+
 ## Built with
 
--   [typescript](https://www.typescriptlang.org/)
+-   [TypeScript](https://www.typescriptlang.org/)
 -   [discord.js](https://discord.js.org/)
 -   [dsbmobile.js](https://github.com/Tch1b0/dsbmobile.js)
