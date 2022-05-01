@@ -12,22 +12,34 @@ function entryEquals(e1: Entry, e2: Entry) {
 }
 
 export class ScheduleHandler {
-    // the dsb instance used to fetch the timetable
+    /** the dsb instance used to fetch the timetable */
     private dsb: Dsbmobile;
 
+    /** the entries that already were listed and should not be listed again */
     previousEntries: Entry[] = [];
+
+    /** the update callbacks that should be called when the schedule changes */
     updateCallbacks: updateCallbackType[] = [];
+
+    /** the name of the class */
     className: string;
+
+    /** the id of the interval that checks the schedule for updates */
     private intervalId: NodeJS.Timer;
 
+    // constructor #1
     constructor(dsbUsername: string, dsbPassword: string, className: string);
+    // constructor #2
     constructor(dsb: Dsbmobile, className: string);
 
     constructor(...args: any[]) {
+        // constructor #1
         if (args[0] instanceof Object) {
             this.dsb = args[0];
             this.className = args[1];
-        } else {
+        }
+        // constructor #2
+        else {
             this.dsb = new Dsbmobile({
                 id: args[0],
                 password: args[1],
@@ -37,18 +49,26 @@ export class ScheduleHandler {
             this.className = args[2];
         }
 
-        // update every 15 minutes
+        // check the schedule for updates every 5 minutes
         this.intervalId = setInterval(() => this.update(), 5 * 60 * 1000);
     }
 
+    /**
+     * removes all entries that are in the past
+     */
     cleanPreviousEntries() {
-        // Subtract a week from unix time
+        // subtract a week from unix time
         const now = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+        // remove entries that are in the past
         this.previousEntries = this.previousEntries.filter(
             (entry) => !isDateInPast(entry.date, new Date(now)),
         );
     }
 
+    /**
+     * checks the schedule for updates and calls the update callbacks if there are changes
+     */
     async update() {
         this.cleanPreviousEntries();
         const timeTable = await this.dsb.getTimetable();
@@ -65,10 +85,17 @@ export class ScheduleHandler {
         this.updateCallbacks.forEach((f) => f([...newEntries]));
     }
 
+    /**
+     * adds the given callback to the update callbacks
+     * @param callback the callback that should be called when the schedule changes
+     */
     onUpdate(callback: updateCallbackType) {
         this.updateCallbacks.push(callback);
     }
 
+    /**
+     * securely destroys the schedule handler
+     */
     destroy() {
         clearInterval(this.intervalId);
     }

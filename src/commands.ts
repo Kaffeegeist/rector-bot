@@ -8,37 +8,50 @@ import { ScheduleHandler } from "./handlers/schedulehandler";
 const cmds = new CommandHandler();
 const guildHandler = GuildHandler.load() || new GuildHandler();
 
+/**
+ * send the entries in an embed
+ * @param channel the channel to send the embed to
+ * @param entries the entries to send
+ */
 export async function sendEntryEmbeds(
     channel: TextChannel | NewsChannel,
     entries: Entry[],
 ) {
     const dates: Date[] = [];
+
+    // add the dates of the entries to the dates array
     for (const entry of entries) {
         if (!dates.some((d) => d.toString() === entry.date.toString())) {
             dates.push(entry.date);
         }
     }
+
+    // create a new embed for the update
     const embed = new MessageEmbed()
         .setColor("YELLOW")
         .setTitle("Neue Änderungen")
         .setTimestamp(new Date());
 
+    // iterate over each date
     for (const date of dates) {
         let text = "";
-        let day = "";
+        let dayName = "";
+
+        // add the entries of the date to the text
         for (const entry of entries.filter(
             (entry) => entry.date.toString() === date.toString(),
         )) {
             text += `${entry.period}. Stunde - ${entry.type}\n`;
-            day = entry.day;
         }
-        const [numDay, month] = date
+
+        // get the localized day and month
+        const [dayNum, month] = date
             .toLocaleDateString("de-DE", {
                 month: "long",
                 day: "2-digit",
             })
             .split(".");
-        embed.addField(`${day}, ${numDay}. ${month}`, text, true);
+        embed.addField(`${dayName}, ${dayNum}. ${month}`, text, true);
     }
     await channel.send({ embeds: [embed] });
 }
@@ -64,33 +77,51 @@ cmds.registerCommand(
     "bind",
     `setzt diesen Kanal als Hauptkanal für ${BOT_NAME}`,
     async (_client, interaction) => {
-        if (!interaction.channel.isText() || interaction.channel.isThread()) {
+        const channel = interaction.channel;
+
+        // check whether the channel is a text channel
+        if (!channel.isText() || channel.isThread()) {
             await interaction.reply(
                 ":x: Dieser Kanal ist kein gewöhnlicher Text-Kanal",
             );
             return;
-        } else if (
+        }
+        // check whether the channel is already bound
+        else if (
             guildHandler.getOptions(interaction.guildId).botChannelId ===
             interaction.channelId
         ) {
             await interaction.reply(":x: Dieser Kanal ist bereits gesetzt");
             return;
         }
+
+        // get the guild options
         const options = guildHandler.getOptions(interaction.guildId);
         options.botChannelId = interaction.channelId;
+
+        // set the schedule handler if it is not already set
         options.scheduleHandler ??= new ScheduleHandler(
             process.env.DSB_USERNAME,
             process.env.DSB_PASSWORD,
             "TGI11/4",
         );
+
         options.scheduleHandler.onUpdate(async (entries) => {
+            // typescript needs to ignore the following instruction because
+            // the channels type is somehow not recognized
             // @ts-ignore
-            await sendEntryEmbeds(message.channel, entries);
+            await sendEntryEmbeds(channel, entries);
         });
+
+        // set the guild options
         guildHandler.setOptions(interaction.guildId, options);
+
+        // reply to the user with success
         await interaction.reply(
             `:white_check_mark: <#${interaction.channelId}> wurde als Hauptkanal gesetzt`,
         );
+
+        // update the schedule handler
         await options.scheduleHandler.update();
     },
 );
@@ -99,8 +130,11 @@ cmds.registerCommand(
     "bound",
     "zeigt den aktuellen Hauptkanal an",
     async (_client, interaction) => {
+        // get the guild options
         const options = guildHandler.getOptions(interaction.guildId);
-        if (options.botChannelId) {
+
+        // check whether the channel is bound
+        if (options.botChannelId !== undefined) {
             await interaction.reply(
                 `Der Hauptkanal ist <#${options.botChannelId}>`,
             );
@@ -116,14 +150,19 @@ cmds.registerCommand(
     "unbind",
     "entfernt diesen Kanal",
     async (_client, interaction) => {
+        // check whether the channel was bound
         if (!guildHandler.guildOptionsMap.has(interaction.guildId)) {
             await interaction.reply(
                 `:x: Es wurde kein Kanal gesetzt. Rufe \`${PREFIX}help\` auf für Hilfe`,
             );
             return;
         }
+
+        // remove the channel from the guild options
         guildHandler.removeGuild(interaction.guildId);
-        await interaction.reply(":white_check_mark:");
+        await interaction.reply(
+            ":white_check_mark: Der Hauptkanal wurde entfernt",
+        );
     },
 );
 
@@ -137,6 +176,7 @@ cmds.registerCommand(
             .setTitle("Über")
             .addField(
                 "Entwickler",
+                // list the contributors and link their GitHub profiles
                 Array.from(CONTRIBUTORS.entries())
                     .map(([name, link]) => `**${name}**: ${link}`)
                     .join("\n"),
@@ -145,7 +185,8 @@ cmds.registerCommand(
                 "Quellcode auf GitHub",
                 "https://github.com/Kaffeegeist/rector-bot",
             );
-        interaction.channel.send({ embeds: [embed] });
+
+        await interaction.reply({ embeds: [embed] });
     },
 );
 
