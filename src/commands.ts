@@ -41,7 +41,7 @@ export async function sendEntryEmbeds(
         for (const entry of entries.filter(
             (entry) => entry.date.toString() === date.toString(),
         )) {
-            text += `${entry.period}. Stunde - ${entry.type}\n`;
+            text += `**${entry.period}.** Stunde -> **${entry.type}**\n`;
         }
 
         // get the localized day and month
@@ -103,7 +103,7 @@ cmds.registerCommand(
         options.scheduleHandler ??= new ScheduleHandler(
             process.env.DSB_USERNAME,
             process.env.DSB_PASSWORD,
-            "TGI11/4",
+            process.env.CLASS_NAME,
         );
 
         options.scheduleHandler.onUpdate(async (entries) => {

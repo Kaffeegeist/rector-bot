@@ -1,7 +1,6 @@
-import { Client, Intents, Options } from "discord.js";
+import { Client, Intents } from "discord.js";
 import { commandHandler, guildHandler } from "./commands";
 import { sendEntryEmbeds } from "./commands";
-import { GuildOptions } from "./handlers/guildhandler";
 import { serializeCommands } from "./utility";
 require("dotenv").config();
 
