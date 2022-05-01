@@ -3,27 +3,26 @@ FROM node:current-alpine
 
 # ===[ PREPARE BUILD ]===
 
-WORKDIR /app
+WORKDIR /app/building
 
 # copy the files needed for building the project into /app/building
-COPY ./src ./building/src
-COPY ./package.json ./building/package.json
-COPY ./package-lock.json ./building/package-lock.json
-COPY ./tsconfig.json ./building/tsconfig.json
+COPY ./src ./src
+COPY ./package.json ./package.json
+COPY ./package-lock.json ./package-lock.json
+COPY ./tsconfig.json ./tsconfig.json
 
 ENV NODE_ENV=production
 
 
 # ===[ RUN BUILD ]===
 
-# cd into the /building directory and build the project
-RUN cd ./building
+# build the project
 RUN npm ci
 RUN npm run build
 # move the output outside the /building directory
 RUN mv ./dist ../dist
-RUN cd ..
-# Delete the /building directory
+# delete the /building directory
+WORKDIR /app
 RUN rm -rf ./building
 
 CMD ["npm", "start"]
