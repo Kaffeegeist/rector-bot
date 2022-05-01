@@ -1,11 +1,11 @@
-import type { Client, Message } from "discord.js";
+import type { Client, CommandInteraction, Interaction } from "discord.js";
 
 /** a new type for a CommandCallback, to prevent redundant typing */
 type CommandCallback = (
     /** the client object that is passed by the handler */
     client: Client,
     /** the message object that is passed by the handler */
-    message: Message,
+    interaction: CommandInteraction,
     /** returns nothing and is optionally asynchronus */
 ) => void | Promise<void>;
 
@@ -81,20 +81,17 @@ export default class CommandHandler {
      * });
      * ```
      */
-    async handleCommand(client: Client, message: Message, prefix: string) {
-        // create a new regular-expression that matches the beginning of a string, with a prefix
-        const regex = new RegExp(`^${prefix}`, "i");
-
-        // remove the prefix from the message content to receive the pure command
-        const command = message.content.replace(regex, "");
+    async handleCommand(client: Client, interaction: CommandInteraction) {
+        if (!interaction.isCommand()) return;
+        const commandName = interaction.commandName;
 
         // check whether a callback for this command has already been declared
-        if (this.commands.has(command)) {
+        if (this.commands.has(commandName)) {
             // get the callback from commands and call it
-            await this.commands.get(command).callback(client, message);
+            await this.commands.get(commandName).callback(client, interaction);
         } else {
             // respond with help if command can't be recognized
-            this.commands.get("help").callback(client, message);
+            this.commands.get("help").callback(client, interaction);
         }
     }
 }

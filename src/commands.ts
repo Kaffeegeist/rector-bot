@@ -45,39 +45,39 @@ export async function sendEntryEmbeds(
 
 cmds.registerCommand(
     "help",
-    "zeigt diese Hilfe an",
-    async (_client, message) => {
+    "zeigt eine Hilfe an",
+    async (_client, interaction) => {
         // create a new embed
         const embed = new MessageEmbed().setColor("BLUE").setTitle("Hilfe");
 
         // add a new field for each command that is registered
         cmds.commands.forEach((command) =>
-            embed.addField(`\`${command.name}\``, command.description),
+            embed.addField(`\`${PREFIX}${command.name}\``, command.description),
         );
 
         // reply to the user with the embed
-        await message.reply({ embeds: [embed] });
+        await interaction.reply({ embeds: [embed] });
     },
 );
 
 cmds.registerCommand(
     "bind",
     `setzt diesen Kanal als Hauptkanal für ${BOT_NAME}`,
-    async (_client, message) => {
-        if (!message.channel.isText() || message.channel.isThread()) {
-            await message.reply(
+    async (_client, interaction) => {
+        if (!interaction.channel.isText() || interaction.channel.isThread()) {
+            await interaction.reply(
                 ":x: Dieser Kanal ist kein gewöhnlicher Text-Kanal",
             );
             return;
         } else if (
-            guildHandler.getOptions(message.guildId).botChannelId ===
-            message.channelId
+            guildHandler.getOptions(interaction.guildId).botChannelId ===
+            interaction.channelId
         ) {
-            await message.reply(":x: Dieser Kanal ist bereits gesetzt");
+            await interaction.reply(":x: Dieser Kanal ist bereits gesetzt");
             return;
         }
-        const options = guildHandler.getOptions(message.guildId);
-        options.botChannelId = message.channelId;
+        const options = guildHandler.getOptions(interaction.guildId);
+        options.botChannelId = interaction.channelId;
         options.scheduleHandler ??= new ScheduleHandler(
             process.env.DSB_USERNAME,
             process.env.DSB_PASSWORD,
@@ -87,9 +87,9 @@ cmds.registerCommand(
             // @ts-ignore
             await sendEntryEmbeds(message.channel, entries);
         });
-        guildHandler.setOptions(message.guildId, options);
-        await message.reply(
-            `:white_check_mark: <#${message.channelId}> wurde als Hauptkanal gesetzt`,
+        guildHandler.setOptions(interaction.guildId, options);
+        await interaction.reply(
+            `:white_check_mark: <#${interaction.channelId}> wurde als Hauptkanal gesetzt`,
         );
         await options.scheduleHandler.update();
     },
@@ -98,14 +98,14 @@ cmds.registerCommand(
 cmds.registerCommand(
     "bound",
     "zeigt den aktuellen Hauptkanal an",
-    async (_client, message) => {
-        const options = guildHandler.getOptions(message.guildId);
+    async (_client, interaction) => {
+        const options = guildHandler.getOptions(interaction.guildId);
         if (options.botChannelId) {
-            await message.reply(
-                `<#${options.botChannelId}> ist der Hauptkanal`,
+            await interaction.reply(
+                `Der Hauptkanal ist <#${options.botChannelId}>`,
             );
         } else {
-            await message.reply(
+            await interaction.reply(
                 `Es ist kein Hauptkanal gesetzt. Benutze \`${PREFIX}bind\` um ihn zu setzen`,
             );
         }
@@ -115,22 +115,22 @@ cmds.registerCommand(
 cmds.registerCommand(
     "unbind",
     "entfernt diesen Kanal",
-    async (_client, message) => {
-        if (!guildHandler.guildOptionsMap.has(message.guildId)) {
-            await message.reply(
+    async (_client, interaction) => {
+        if (!guildHandler.guildOptionsMap.has(interaction.guildId)) {
+            await interaction.reply(
                 `:x: Es wurde kein Kanal gesetzt. Rufe \`${PREFIX}help\` auf für Hilfe`,
             );
             return;
         }
-        guildHandler.removeGuild(message.guildId);
-        await message.reply(":white_check_mark:");
+        guildHandler.removeGuild(interaction.guildId);
+        await interaction.reply(":white_check_mark:");
     },
 );
 
 cmds.registerCommand(
     "about",
     `zeigt Informationen über ${BOT_NAME} an`,
-    async (_client, message) => {
+    async (_client, interaction) => {
         // create a new embed
         const embed = new MessageEmbed()
             .setColor("LUMINOUS_VIVID_PINK")
@@ -145,7 +145,7 @@ cmds.registerCommand(
                 "Quellcode auf GitHub",
                 "https://github.com/Kaffeegeist/rector-bot",
             );
-        message.channel.send({ embeds: [embed] });
+        interaction.channel.send({ embeds: [embed] });
     },
 );
 
