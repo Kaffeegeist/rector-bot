@@ -33,4 +33,4 @@ client.on("messageCreate", async (message) => {
     await commandHandler.handleCommand(client, message, PREFIX);
 });
 
-client.login(process.env.TOKEN);
+client.login(process.env.BOT_TOKEN);
