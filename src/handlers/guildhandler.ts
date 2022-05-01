@@ -1,6 +1,9 @@
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { ScheduleHandler } from "./schedulehandler";
 
+/**
+ * the options for a guild
+ */
 export interface GuildOptions {
     botChannelId?: string;
     scheduleHandler?: ScheduleHandler;
@@ -9,24 +12,46 @@ export interface GuildOptions {
 export class GuildHandler {
     static dataDirPath = "./data";
     static filePath = `${this.dataDirPath}/guild-options.json`;
+
+    /** the collection of guild options */
     guildOptionsMap: Map<string, GuildOptions> = new Map();
 
+    /**
+     * add a guild with its configuration
+     * @param guildId the id of the guild
+     * @param config the configuration of the guild
+     */
     addGuild(guildId: string, config: GuildOptions = {}): void {
         config.scheduleHandler.onUpdate(() => this.save());
         this.setOptions(guildId, config);
     }
 
+    /**
+     * remove a guild from the handler
+     * @param guildId the id of the guild
+     */
     removeGuild(guildId: string): void {
         this.getOptions(guildId, false)?.scheduleHandler.destroy();
         this.guildOptionsMap.delete(guildId);
         this.save();
     }
 
+    /**
+     * set the options for a guild
+     * @param guildId the id of the guild
+     * @param options the options to set
+     */
     setOptions(guildId: string, options: GuildOptions) {
         this.guildOptionsMap.set(guildId, options);
         this.save();
     }
 
+    /**
+     * get the options for a guild
+     * @param guildId the id of the guild
+     * @param autoCreate whether to create the options if they don't exist
+     * @returns the options for the guild
+     */
     getOptions(guildId: string, autoCreate = true): GuildOptions | null {
         if (!this.guildOptionsMap.has(guildId)) {
             if (autoCreate) {
@@ -38,6 +63,9 @@ export class GuildHandler {
         return { ...this.guildOptionsMap.get(guildId) };
     }
 
+    /**
+     * writes the guild options to the file
+     */
     save() {
         if (!existsSync(GuildHandler.dataDirPath))
             mkdirSync(GuildHandler.dataDirPath);
@@ -45,10 +73,14 @@ export class GuildHandler {
         writeFileSync(GuildHandler.filePath, JSON.stringify(this.toJSON()));
     }
 
+    /**
+     * loads the guild options from the file
+     * @returns the guild handler or null if the file doesn't exist
+     */
     static load() {
         return !existsSync(this.filePath)
             ? null
-            : this.fromJSON(JSON.parse(readFileSync(this.filePath).toString()));
+            : this.fromJSON(readFileSync(this.filePath).toJSON());
     }
 
     toJSON() {

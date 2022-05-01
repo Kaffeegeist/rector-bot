@@ -11,20 +11,28 @@ const client = new Client({
 
 client.on("ready", () => {
     console.log(`Now logged in as ${client.user.tag}`);
+
+    // serialize the commands to be able to present them as slash commands
     const serializedCommands = Array.from(
         commandHandler.commands.entries(),
     ).map(([_, cmd]) => ({
         name: cmd.name,
         description: cmd.description,
     }));
+
     guildHandler.guildOptionsMap.forEach(async (options, guildId) => {
         const guild = await client.guilds.fetch(guildId);
         const channel = await guild.channels.fetch(options.botChannelId);
+        // ensure that the channel is a text channel
         if (!channel.isText() || channel.isThread()) return;
+
+        // send the commands to the channel when an update is received
         options.scheduleHandler.onUpdate((entries) =>
             sendEntryEmbeds(channel, entries),
         );
         await options.scheduleHandler.update();
+
+        // register the serialized slash commands
         for (const command of serializedCommands) {
             // check whether the command is already registered
             await guild.commands.create(command);
