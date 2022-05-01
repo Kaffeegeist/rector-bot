@@ -18,8 +18,6 @@ services:
             - BOT_TOKEN=<YOUR DISCORD BOT TOKEN>
             - DSB_USERNAME=<YOUR DSBmobile USERNAME>
             - DSB_PASSWORD=<YOUR DSBmobile USERNAME>
-        ports:
-            - "<YOUR PORT>:3000"
 
         # optionally for data consistency:
         volumes:
