@@ -1,6 +1,8 @@
-# rector bot
-
-A discord bot for pushing new notifications about our timetable
+<div align="center">
+    <img src="./media/icon.png" width="300px" style="border-radius: 50%; border: 5px solid black;">
+    <h1>rector bot</h1>
+    <p>A discord bot for pushing new notifications about [our](https://github.com/Kaffeegeist) timetable</p>
+</div>
 
 ## Setting up
 
