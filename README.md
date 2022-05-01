@@ -18,6 +18,7 @@ services:
             - BOT_TOKEN=<YOUR DISCORD BOT TOKEN>
             - DSB_USERNAME=<YOUR DSBmobile USERNAME>
             - DSB_PASSWORD=<YOUR DSBmobile USERNAME>
+            - CLASS_NAME=<YOUR CLASS NAME>
 
         # optionally for data consistency:
         volumes:
@@ -40,6 +41,7 @@ Now create the file `.env` and declare following variables:
 BOT_TOKEN
 DSB_USERNAME
 DSB_PASSWORD
+CLASS_NAME
 ```
 
 ```bash
