@@ -24,6 +24,32 @@ services:
             - "./data:/app/data"
 ```
 
+### Building from source
+
+```bash
+$ git clone https://github.com/Kaffeegeist/rector-bot
+```
+
+```bash
+$ cd ./rector-bot
+```
+
+Now create the file `.env` and declare following variables:
+
+```
+BOT_TOKEN
+DSB_USERNAME
+DSB_PASSWORD
+```
+
+```bash
+$ npm ci
+```
+
+```
+$ npm run br
+```
+
 ## npm scripts
 
 Usage: `npm run <script>`
