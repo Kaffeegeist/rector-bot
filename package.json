@@ -5,7 +5,8 @@
     "scripts": {
         "build": "tsc",
         "start": "node ./dist/index.js",
-        "br": "npm run build && npm run start"
+        "br": "npm run build && npm run start",
+        "test": "ts-mocha --config tsconfig.json --paths tests/**/*.spec.ts"
     },
     "dependencies": {
         "discord.js": "^13.6.0",
@@ -14,6 +15,10 @@
         "typescript": "^4.5.5"
     },
     "devDependencies": {
-        "@tch1b0/prettier-config": "^1.0.0"
+        "@tch1b0/prettier-config": "^1.0.0",
+        "@types/chai": "^4.3.1",
+        "@types/mocha": "^9.1.1",
+        "chai": "^4.3.6",
+        "ts-mocha": "^9.0.2"
     }
 }

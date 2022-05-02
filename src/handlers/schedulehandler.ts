@@ -15,6 +15,9 @@ export class ScheduleHandler {
     /** the dsb instance used to fetch the timetable */
     private dsb: Dsbmobile;
 
+    /** the id of the interval that checks the schedule for updates */
+    private intervalId: NodeJS.Timer;
+
     /** the entries that already were listed and should not be listed again */
     previousEntries: Entry[] = [];
 
@@ -23,9 +26,6 @@ export class ScheduleHandler {
 
     /** the name of the class */
     className: string;
-
-    /** the id of the interval that checks the schedule for updates */
-    private intervalId: NodeJS.Timer;
 
     // constructor #1
     constructor(dsbUsername: string, dsbPassword: string, className: string);
