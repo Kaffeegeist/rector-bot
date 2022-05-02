@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
-        "outDir": "./dist"
-    },
-    "include": ["./src/**/*.ts"]
+        "outDir": "./dist",
+        "paths": {
+            "@": ["./src"],
+            "@/*": ["./src/*"]
+        },
+        "baseUrl": "./"
+    }
 }
