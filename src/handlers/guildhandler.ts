@@ -16,6 +16,8 @@ export class GuildHandler {
     /** the collection of guild options */
     guildOptionsMap: Map<string, GuildOptions> = new Map();
 
+    constructor(public savable = true) {}
+
     /**
      * add a guild with its configuration
      * @param guildId the id of the guild
@@ -32,7 +34,7 @@ export class GuildHandler {
      */
     removeGuild(guildId: string): void {
         if (!this.guildOptionsMap.has(guildId)) return;
-        this.getOptions(guildId, false)?.scheduleHandler.destroy();
+        this.getOptions(guildId, false)?.scheduleHandler?.destroy();
         this.guildOptionsMap.delete(guildId);
         this.save();
     }
@@ -77,6 +79,7 @@ export class GuildHandler {
      * writes the guild options to the file
      */
     save() {
+        if (!this.savable) return;
         if (!existsSync(GuildHandler.dataDirPath))
             mkdirSync(GuildHandler.dataDirPath);
 
