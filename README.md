@@ -29,6 +29,14 @@ services:
             - "./data:/app/data"
 ```
 
+```bash
+$ docker-compose pull
+```
+
+```bash
+$ docker-compose up -d
+```
+
 ### Building from source
 
 ```bash
