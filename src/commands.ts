@@ -74,7 +74,7 @@ export async function sendEntryEmbeds(
                     text += `**${entry.period}.** Stunde statt ${entry.oldRoom} in ${entry.newRoom}\n`;
                     break;
                 case("betreuung"):
-                    text += `**${entry.period}.** Stunde wird nur betreut\n`;
+                    text += `**${entry.period}.** Stunde ${entry.newSubject} wird nur betreut\n`;
                     break;
                 default:
                     text += `**${entry.period}. ** Stunde`
@@ -89,7 +89,7 @@ export async function sendEntryEmbeds(
                         text+=`in Raum ${entry.newRoom} statt ${entry.oldRoom}\n`;
                     }
             }
-            text += `**${entry.period}.** Stunde -> ${(entry.type)}\n`;
+        
         }
 
         // get the localized day and month
