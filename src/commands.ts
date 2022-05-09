@@ -35,13 +35,59 @@ export async function sendEntryEmbeds(
     // iterate over each date
     for (const date of dates) {
         let text = "";
-        let dayName = entries[0].day;
+        const entriesToday = entries.filter(
+            (entry) => entry.date.toString() === date.toString(),
+        );
+        let dayName = entriesToday[0].day;
 
         // add the entries of the date to the text
-        for (const entry of entries.filter(
-            (entry) => entry.date.toString() === date.toString(),
-        )) {
-            text += `**${entry.period}.** Stunde -> **${entry.type}**\n`;
+        for (const entry of entriesToday) {
+            switch (entry.type.toLowerCase()) {
+                case "vertretung":
+                    text += `**${entry.period}.** Stunde vertretung ${entry.newSubject}\n`;
+                    break;
+                case "entfall":
+                    text += `**${entry.period}.** Stunde ${entry.oldSubject} entfällt\n`;
+                    break;
+                case "verlegung":
+                    text += `**${entry.period}. ** Stunde`;
+                    if (entry.oldSubject === entry.newSubject) {
+                        text += ` gleiches Fach`;
+                    } else {
+                        text += ` statt ${entry.oldSubject} habt ihr ${entry.newSubject}`;
+                    }
+                    if (entry.oldRoom === entry.newRoom) {
+                        text += ` selber Raum\n`;
+                    } else {
+                        text += `in Raum ${entry.newRoom} statt ${entry.oldRoom}\n`;
+                    }
+                    break;
+                case "tausch":
+                    if (entry.oldRoom === entry.newRoom) {
+                        text += `**${entry.period}.** Stunde altes Fach ${entry.oldSubject} wird durch ${entry.newSubject} ersetzt gleicher Raum\n`;
+                    } else {
+                        text += `**${entry.period}.** Stunde altes Fach ${entry.oldSubject} wird durch ${entry.newSubject} in Raum ${entry.newRoom} statt ${entry.oldRoom}\n`;
+                    }
+                    break;
+                case "raum-vtr.":
+                    text += `**${entry.period}.** Stunde statt ${entry.oldRoom} in ${entry.newRoom}\n`;
+                    break;
+                case "betreuung":
+                    text += `**${entry.period}.** Stunde ${entry.newSubject} wird nur betreut\n`;
+                    break;
+                default:
+                    text += `**${entry.period}. ** Stunde`;
+                    if (entry.oldSubject === entry.newSubject) {
+                        text += ` gleiches Fach`;
+                    } else {
+                        text += ` statt ${entry.oldSubject} habt ihr ${entry.newSubject}`;
+                    }
+                    if (entry.oldRoom === entry.newRoom) {
+                        text += ` selber Raum\n`;
+                    } else {
+                        text += `in Raum ${entry.newRoom} statt ${entry.oldRoom}\n`;
+                    }
+            }
         }
 
         // get the localized day and month
