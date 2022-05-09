@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { GuildHandler } from "@/handlers/guildhandler";
+import { GuildHandler } from "../src/handlers/guildhandler";
 
 const guildHandler = new GuildHandler(false);
 

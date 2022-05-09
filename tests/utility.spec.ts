@@ -1,5 +1,5 @@
-import { Command, CommandHandler } from "@/handlers/commandhandler";
-import { isDateInPast, serializeCommands } from "@/utility";
+import { Command, CommandHandler } from "../src/handlers/commandhandler";
+import { isDateInPast, serializeCommands } from "../src/utility";
 import { expect } from "chai";
 
 describe("Test Utility", () => {
