@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { CommandHandler } from "@/handlers/commandhandler";
+import { CommandHandler } from "../src/handlers/commandhandler";
 
 const commandHandler = new CommandHandler();
 
