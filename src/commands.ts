@@ -1,6 +1,5 @@
 import { MessageEmbed, NewsChannel, TextChannel } from "discord.js";
 import { Entry } from "dsbmobile";
-import { BreakOrContinueStatement } from "typescript";
 import { BOT_NAME, CONTRIBUTORS, PREFIX } from "./constants";
 import { CommandHandler } from "./handlers/commandhandler";
 import { GuildHandler } from "./handlers/guildhandler";
