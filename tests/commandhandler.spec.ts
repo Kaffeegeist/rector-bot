@@ -13,7 +13,7 @@ describe("Test CommandHandler", () => {
             },
         );
         expect(commandHandler.commands.has("hello")).to.be.true;
-        const command = commandHandler.commands.get("hello");
+        const command = commandHandler.commands.get("hello")!;
         expect(command.name).to.equal("hello");
         expect(command.description).to.equal("greets the user");
         expect(command.callback).to.be.a("function");
