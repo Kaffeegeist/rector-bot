@@ -2,7 +2,7 @@ import { MessageEmbed, NewsChannel, TextChannel } from "discord.js";
 import { Entry } from "dsbmobile";
 import { BOT_NAME, CONTRIBUTORS, PREFIX } from "./constants";
 import { CommandHandler } from "./handlers/commandhandler";
-import { GuildHandler } from "./handlers/guildhandler";
+import { GuildHandler, GuildOptions } from "./handlers/guildhandler";
 import { ScheduleHandler } from "./handlers/schedulehandler";
 
 const cmds = new CommandHandler();
@@ -124,9 +124,10 @@ cmds.registerCommand(
     `setzt diesen Kanal als Hauptkanal für ${BOT_NAME}`,
     async (_client, interaction) => {
         const channel = interaction.channel;
+        const guildId: string = interaction.guildId!;
 
         // check whether the channel is a text channel
-        if (!channel.isText() || channel.isThread()) {
+        if (!channel!.isText() || channel.isThread()) {
             await interaction.reply(
                 ":x: Dieser Kanal ist kein gewöhnlicher Text-Kanal",
             );
@@ -134,7 +135,7 @@ cmds.registerCommand(
         }
         // check whether the channel is already bound
         else if (
-            guildHandler.getOptions(interaction.guildId).botChannelId ===
+            guildHandler.getOptions(guildId)?.botChannelId ===
             interaction.channelId
         ) {
             await interaction.reply(":x: Dieser Kanal ist bereits gesetzt");
@@ -142,14 +143,15 @@ cmds.registerCommand(
         }
 
         // get the guild options
-        const options = guildHandler.getOptions(interaction.guildId);
+        // in this case, the guild options CAN NOT be null
+        const options: GuildOptions = guildHandler.getOptions(guildId)!;
         options.botChannelId = interaction.channelId;
 
         // set the schedule handler if it is not already set
         options.scheduleHandler ??= new ScheduleHandler(
-            process.env.DSB_USERNAME,
-            process.env.DSB_PASSWORD,
-            process.env.CLASS_NAME,
+            process.env.DSB_USERNAME!,
+            process.env.DSB_PASSWORD!,
+            process.env.CLASS_NAME!,
         );
 
         options.scheduleHandler.onUpdate(async (entries) => {
@@ -160,7 +162,7 @@ cmds.registerCommand(
         });
 
         // set the guild options
-        guildHandler.setOptions(interaction.guildId, options);
+        guildHandler.setOptions(interaction.guildId!, options);
 
         // reply to the user with success
         await interaction.reply(
@@ -176,8 +178,10 @@ cmds.registerCommand(
     "bound",
     "zeigt den aktuellen Hauptkanal an",
     async (_client, interaction) => {
+        const guildId: string = interaction.guildId!;
+
         // get the guild options
-        const options = guildHandler.getOptions(interaction.guildId);
+        const options = guildHandler.getOptions(guildId)!;
 
         // check whether the channel is bound
         if (options.botChannelId !== undefined) {
@@ -196,8 +200,10 @@ cmds.registerCommand(
     "unbind",
     "entfernt diesen Kanal",
     async (_client, interaction) => {
+        const guildId = interaction.guildId!;
+
         // check whether the channel was bound
-        if (!guildHandler.guildOptionsMap.has(interaction.guildId)) {
+        if (!guildHandler.guildOptionsMap.has(guildId)) {
             await interaction.reply(
                 `:x: Es wurde kein Kanal gesetzt. Rufe \`${PREFIX}help\` auf für Hilfe`,
             );
@@ -205,7 +211,7 @@ cmds.registerCommand(
         }
 
         // remove the channel from the guild options
-        guildHandler.removeGuild(interaction.guildId);
+        guildHandler.removeGuild(guildId);
         await interaction.reply(
             ":white_check_mark: Der Hauptkanal wurde entfernt",
         );

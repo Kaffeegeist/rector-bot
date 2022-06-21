@@ -1,3 +1,4 @@
+import { Options } from "discord.js";
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { ScheduleHandler } from "./schedulehandler";
 
@@ -97,20 +98,20 @@ export class GuildHandler {
     }
 
     toJSON() {
-        const serializedMap = [];
+        const serializedMap: any[] = [];
         this.guildOptionsMap.forEach((options, guildId) => {
             serializedMap.push([
                 guildId,
                 {
                     "bot-channel-id": options.botChannelId,
-                    scheduleHandler: options.scheduleHandler.toJSON(),
+                    scheduleHandler: options.scheduleHandler?.toJSON(),
                 },
             ]);
         });
         return serializedMap;
     }
 
-    static fromJSON(json: any) {
+    static fromJSON(json: [string, any][]) {
         const guildHandler = new GuildHandler();
         json = json.map(([guildId, options]) => [
             guildId,
@@ -123,7 +124,7 @@ export class GuildHandler {
         ]);
         guildHandler.guildOptionsMap = new Map(json);
         guildHandler.guildOptionsMap.forEach((options, _guildId) => {
-            options.scheduleHandler.onUpdate(() => guildHandler.save());
+            options.scheduleHandler?.onUpdate(() => guildHandler.save());
         });
         return guildHandler;
     }
