@@ -20,7 +20,7 @@ describe("Test GuildHandler", () => {
     });
 
     it("get Guild Options", () => {
-        const opt = guildHandler.getOptions("123");
+        const opt = guildHandler.getOptions("123")!;
         expect(opt.botChannelId).to.equal("456");
         opt.botChannelId = "789";
         expect(guildHandler.getOptions("123")?.botChannelId).to.equal("456");

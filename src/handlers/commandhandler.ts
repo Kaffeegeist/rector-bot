@@ -1,4 +1,4 @@
-import type { Client, CommandInteraction, Interaction } from "discord.js";
+import type { Client, CommandInteraction } from "discord.js";
 
 /** a new type for a CommandCallback, to prevent redundant typing */
 type CommandCallback = (
