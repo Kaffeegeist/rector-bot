@@ -88,10 +88,10 @@ export class CommandHandler {
         // check whether a callback for this command has already been declared
         if (this.commands.has(commandName)) {
             // get the callback from commands and call it
-            await this.commands.get(commandName).callback(client, interaction);
+            await this.commands.get(commandName)!.callback(client, interaction);
         } else {
             // respond with help if command can't be recognized
-            this.commands.get("help").callback(client, interaction);
+            this.commands.get("help")!.callback(client, interaction);
         }
     }
 }

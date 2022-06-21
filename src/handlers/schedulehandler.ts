@@ -11,6 +11,12 @@ function entryEquals(e1: Entry, e2: Entry) {
     );
 }
 
+export interface ScheduleHandlerJSON {
+    dsb: object;
+    "previous-entries": object[];
+    "class-name": string;
+}
+
 export class ScheduleHandler {
     /** the dsb instance used to fetch the timetable */
     private dsb: Dsbmobile;
@@ -100,7 +106,7 @@ export class ScheduleHandler {
         clearInterval(this.intervalId);
     }
 
-    toJSON() {
+    toJSON(): ScheduleHandlerJSON {
         return {
             dsb: this.dsb.toJSON(),
             "previous-entries": this.previousEntries.map((entry) =>
@@ -110,7 +116,7 @@ export class ScheduleHandler {
         };
     }
 
-    static fromJSON(json: object) {
+    static fromJSON(json: ScheduleHandlerJSON) {
         const dsb = Dsbmobile.fromJSON(json["dsb"]);
         const scheduleHandler = new ScheduleHandler(dsb, json["class-name"]);
         scheduleHandler.previousEntries = json["previous-entries"].map(
