@@ -8,7 +8,7 @@ describe("Test CommandHandler", () => {
         commandHandler.registerCommand(
             "hello",
             "greets the user",
-            async (client, message) => {
+            async (_client, message) => {
                 await message.reply("Hello");
             },
         );
