@@ -1,10 +1,12 @@
 import { MessageEmbed, NewsChannel, TextChannel } from "discord.js";
 import { Entry } from "dsbmobile";
+import { Config } from "./config";
 import { BOT_NAME, CONTRIBUTORS, PREFIX } from "./constants";
 import { CommandHandler } from "./handlers/commandhandler";
 import { GuildHandler, GuildOptions } from "./handlers/guildhandler";
 import { ScheduleHandler } from "./handlers/schedulehandler";
 
+const config = Config.instance;
 const cmds = new CommandHandler();
 const guildHandler = GuildHandler.load() || new GuildHandler();
 
