@@ -5,6 +5,7 @@
         "target": "ES5",
         "resolveJsonModule": true,
         "esModuleInterop": true,
+        "downlevelIteration": true,
         "paths": {
             "@": ["./src"],
             "@/*": ["./src/*"]

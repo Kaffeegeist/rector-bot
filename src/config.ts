@@ -1,3 +1,4 @@
+import { Entry } from "dsbmobile";
 import { existsSync, readFileSync } from "node:fs";
 import defaultConfig from "./default-config.json";
 
@@ -27,14 +28,32 @@ export class Config {
         }
 
         this.responseMap = new Map(Object.entries(jsonContent.responses));
-        for (const [entryType, response] of Object.entries<string>(
-            jsonContent.responses,
-        )) {
-            this.responseMap.set(entryType, response);
-        }
     }
 
     static get instance() {
         return this._instance || new Config();
+    }
+
+    getResponse(entry: Entry): string {
+        return this.formatResponse(
+            this.responseMap.get(
+                this.responseMap.has(entry.type) ? entry.type : "default",
+            )!,
+            entry,
+        );
+    }
+
+    formatResponse(response: string, entry: Entry): string {
+        const replacementMap = new Map<string, string>([
+            ["OLD_SUBJECT", entry.oldSubject],
+            ["NEW_SUBJECT", entry.newSubject],
+            ["PERIOD", entry.period.toString()],
+            ["OLD_ROOM", entry.oldRoom],
+            ["NEW_ROOM", entry.newRoom],
+        ]);
+        for (const [k, v] of replacementMap.entries()) {
+            response.replace(k, v);
+        }
+        return response;
     }
 }
