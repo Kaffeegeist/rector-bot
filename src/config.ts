@@ -1,28 +1,36 @@
 import { existsSync, readFileSync } from "node:fs";
+import defaultConfig from "./default-config.json";
 
 export type ResponseMap = Map<string, string>;
+
+interface ConfigFile {
+    responses: {
+        [key: string]: string;
+    };
+}
 
 export class Config {
     private static _instance: Config;
 
-    responseMap: ResponseMap | null = null;
+    responseMap: ResponseMap;
 
     constructor(configPath = "./data/config.json") {
         Config._instance = this;
+        let jsonContent: ConfigFile;
+
         if (!existsSync(configPath)) {
-            console.log("Config does not exist");
-            return;
+            console.log("Config file does not exist, importing default config");
+            jsonContent = defaultConfig as ConfigFile;
+        } else {
+            const content = readFileSync(configPath);
+            jsonContent = JSON.parse(content.toString("utf-8")) as ConfigFile;
         }
 
-        const content = readFileSync(configPath);
-        const jsonContent = JSON.parse(content.toString("utf-8"));
-        if ("reponses" in jsonContent) {
-            this.responseMap = new Map();
-            for (const [entryType, response] of Object.entries<string>(
-                jsonContent["responses"],
-            )) {
-                this.responseMap.set(entryType, response);
-            }
+        this.responseMap = new Map(Object.entries(jsonContent.responses));
+        for (const [entryType, response] of Object.entries<string>(
+            jsonContent.responses,
+        )) {
+            this.responseMap.set(entryType, response);
         }
     }
 
