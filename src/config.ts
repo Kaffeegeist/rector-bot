@@ -1,6 +1,7 @@
 import { Entry } from "dsbmobile";
 import { existsSync, readFileSync } from "node:fs";
 import defaultConfig from "./default-config.json";
+import { formatFromMap } from "./utility";
 
 export type ResponseMap = Map<string, string>;
 
@@ -34,13 +35,16 @@ export class Config {
         return this._instance || new Config();
     }
 
+    /**
+     * get the response to a certain entry type
+     * @param entry the entry to compute the response from
+     * @returns the computed response
+     */
     getResponse(entry: Entry): string {
-        return this.formatResponse(
-            this.responseMap.get(
-                this.responseMap.has(entry.type) ? entry.type : "default",
-            )!,
-            entry,
-        );
+        const rawResponse = this.responseMap.get(
+            this.responseMap.has(entry.type) ? entry.type : "default",
+        )!;
+        return this.formatResponse(rawResponse, entry);
     }
 
     formatResponse(response: string, entry: Entry): string {
@@ -51,9 +55,6 @@ export class Config {
             ["OLD_ROOM", entry.oldRoom],
             ["NEW_ROOM", entry.newRoom],
         ]);
-        for (const [k, v] of replacementMap.entries()) {
-            response.replace(k, v);
-        }
-        return response;
+        return formatFromMap(response, replacementMap);
     }
 }
