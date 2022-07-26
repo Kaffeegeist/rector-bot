@@ -1,9 +1,9 @@
 {
     "responses": {
-        "vertretung": "PERIOD .Stunde vertretung",
-        "entfall": "PERIOD. Stunde OLDSUBJECT entfällt",
+        "vertretung": "PERIOD. Stunde vertretung",
+        "entfall": "PERIOD. Stunde OLD_SUBJECT entfällt",
         "verlegung": "PERIOD. Stunde verlegung",
-        "tausch": "PERIOD. Stunde statt OLDSUBJECT jetzt NEW SUBJECT",
+        "tausch": "PERIOD. Stunde statt OLD_SUBJECT jetzt NEW_SUBJECT",
         "betreuung": "PERIOD. Stunde betreuung",
         "default": "PERIOD. Stunde Es bleibt spannend"
     }
