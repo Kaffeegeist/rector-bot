@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  bot:
+    image: tch1b0/rector:latest
+    environment:
+      - BOT_TOKEN=<YOUR DISCORD BOT TOKEN>
+      - DSB_USERNAME=<YOUR DSBmobile USERNAME>
+      - DSB_PASSWORD=<YOUR DSBmobile USERNAME>
+      - CLASS_NAME=<YOUR CLASS NAME>
+
+    volumes:
+      - "./data:/app/data"
