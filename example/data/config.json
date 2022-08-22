@@ -1,0 +1,6 @@
+{
+    "responses": {
+        "default": "PERIOD. default response",
+        "other": "These will be replaced with their actual values: OLD_SUBJECT NEW_SUBJECT OLD_ROOM NEW_ROOM"
+    }
+}

@@ -69,8 +69,7 @@ export class CommandHandler {
     /**
      * handle a command using the registered commands
      * @param client the client that is handeling the command
-     * @param message the message object that was sent
-     * @param prefix the prefix of the bot
+     * @param interaction the interaction to handle
      *
      * @example
      * ```ts
