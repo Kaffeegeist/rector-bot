@@ -37,6 +37,8 @@ $ docker-compose pull
 $ docker-compose up -d
 ```
 
+You can optionally create a [config file](https://github.com/Kaffeegeist/rector-bot/tree/main/example/data/config.json) in `data/config.json`
+
 ### Building from source
 
 ```bash
