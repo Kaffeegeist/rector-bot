@@ -6,7 +6,7 @@ import { CommandHandler } from "./handlers/commandhandler";
  * @param date the second date (the given moment)
  * @returns whether the first date is before the second date
  */
-export function isDateInPast(past: Date, date: Date): boolean {
+export function isDateInPast(past: Date = new Date(), date: Date): boolean {
     return past.setHours(0, 0, 0, 0) < date.setHours(0, 0, 0, 0);
 }
 
@@ -40,7 +40,7 @@ export function serializeCommands(commandHandler: CommandHandler) {
  * ```
  */
 export function formatFromMap(str: string, map: Map<string, string>): string {
-    for (const [key, value] of map.values()) {
+    for (const [key, value] of map.entries()) {
         str = str.replace(key, value);
     }
     return str;
