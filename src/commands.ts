@@ -54,7 +54,14 @@ export async function sendEntryEmbeds(
                 day: "2-digit",
             })
             .split(".");
-        embed.addField(`${dayName}, ${dayNum}. ${month}`, text, true);
+
+        embed.addFields([
+            {
+                name: `${dayName}, ${dayNum}. ${month}`,
+                value: text,
+                inline: true,
+            },
+        ]);
     }
     await channel.send({ embeds: [embed] });
 }

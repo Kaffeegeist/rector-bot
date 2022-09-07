@@ -1,4 +1,3 @@
-import { Options } from "discord.js";
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { ScheduleHandler } from "./schedulehandler";
 
