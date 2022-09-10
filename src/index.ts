@@ -19,7 +19,8 @@ client.on("ready", () => {
         const guild = await client.guilds.fetch(guildId);
         const channel = (await guild.channels.fetch(options.botChannelId!))!;
         // ensure that the channel is a text channel
-        if (!channel.isText() || channel.isThread()) return;
+        if (!channel.isText() || channel.isThread() || channel.isVoice())
+            return;
 
         // send the commands to the channel when an update is received
         options.scheduleHandler!.onUpdate((entries) =>
