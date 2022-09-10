@@ -6,7 +6,7 @@ import { CommandHandler } from "./handlers/commandhandler";
  * @param date the second date (the given moment)
  * @returns whether the first date is before the second date
  */
-export function isDateInPast(past: Date = new Date(), date: Date): boolean {
+export function isDateInPast(past: Date, date: Date = new Date()): boolean {
     return past.setHours(0, 0, 0, 0) < date.setHours(0, 0, 0, 0);
 }
 
