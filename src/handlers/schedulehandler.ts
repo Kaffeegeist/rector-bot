@@ -1,5 +1,6 @@
-import Dsbmobile, { Entry } from "dsbmobile";
+import Dsbmobile, { Entry, TimeTable } from "dsbmobile";
 import { isDateInPast } from "../utility";
+require("dotenv").config();
 
 type updateCallbackType = (entries: Entry[]) => void | Promise<void>;
 
@@ -36,28 +37,17 @@ export class ScheduleHandler {
     className: string;
 
     // constructor #1
-    constructor(dsbUsername: string, dsbPassword: string, className: string);
-    // constructor #2
-    constructor(dsb: Dsbmobile, className: string);
-
-    constructor(...args: any[]) {
+    constructor(dsbUsername: string, dsbPassword: string, className: string) {
         ScheduleHandler._instance = this;
 
-        // constructor #1
-        if (args[0] instanceof Object) {
-            this.dsb = args[0];
-            this.className = args[1];
-        }
-        // constructor #2
-        else {
-            this.dsb = new Dsbmobile({
-                id: args[0],
-                password: args[1],
-                baseURL: "https://mydsb.johannespour.de",
-                resourceBaseURL: "https://mydsb.johannespour.de/light",
-            });
-            this.className = args[2];
-        }
+        this.dsb = new Dsbmobile({
+            id: dsbUsername,
+            password: dsbPassword,
+            baseURL: "https://mydsb.johannespour.de",
+            resourceBaseURL: "https://mydsb.johannespour.de/light",
+        });
+
+        this.className = className;
 
         // check the schedule for updates every 5 minutes
         this.intervalId = setInterval(() => this.update(), 5 * 60 * 1000);
@@ -88,7 +78,13 @@ export class ScheduleHandler {
      */
     async update() {
         this.cleanPreviousEntries();
-        const timeTable = await this.dsb.getTimetable();
+        let timeTable: TimeTable;
+        try {
+            timeTable = await this.dsb.getTimetable();
+        } catch (e) {
+            console.log(this.dsb);
+            throw e;
+        }
         const entries: Entry[] = timeTable.findByClassName(this.className);
         const newEntries = entries.filter((newEntry) => {
             return (
@@ -130,8 +126,7 @@ export class ScheduleHandler {
     }
 
     static fromJSON(json: ScheduleHandlerJSON) {
-        const dsb = Dsbmobile.fromJSON(json["dsb"]);
-        const scheduleHandler = new ScheduleHandler(dsb, json["class-name"]);
+        const scheduleHandler = ScheduleHandler.instance;
         scheduleHandler.previousEntries = json["previous-entries"].map(
             (entry: object) => Entry.fromJSON(entry),
         );

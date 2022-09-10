@@ -103,11 +103,6 @@ export class GuildHandler {
                 guildId,
                 {
                     "bot-channel-id": options.botChannelId,
-                    scheduleHandler: new ScheduleHandler(
-                        process.env.DSB_USERNAME!,
-                        process.env.DSB_PASSWORD!,
-                        process.env.CLASS_NAME!,
-                    ),
                 },
             ]);
         });
@@ -119,9 +114,7 @@ export class GuildHandler {
         json = json.map(([guildId, options]) => [
             guildId,
             {
-                scheduleHandler: ScheduleHandler.fromJSON(
-                    options.scheduleHandler,
-                ),
+                scheduleHandler: ScheduleHandler.instance,
                 botChannelId: options["bot-channel-id"],
             } as GuildOptions,
         ]);
