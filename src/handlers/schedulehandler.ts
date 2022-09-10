@@ -18,6 +18,8 @@ export interface ScheduleHandlerJSON {
 }
 
 export class ScheduleHandler {
+    private static _instance: ScheduleHandler;
+
     /** the dsb instance used to fetch the timetable */
     private dsb: Dsbmobile;
 
@@ -39,6 +41,8 @@ export class ScheduleHandler {
     constructor(dsb: Dsbmobile, className: string);
 
     constructor(...args: any[]) {
+        ScheduleHandler._instance = this;
+
         // constructor #1
         if (args[0] instanceof Object) {
             this.dsb = args[0];
@@ -59,16 +63,23 @@ export class ScheduleHandler {
         this.intervalId = setInterval(() => this.update(), 5 * 60 * 1000);
     }
 
+    static get instance() {
+        return (
+            ScheduleHandler._instance ??
+            new ScheduleHandler(
+                process.env.DSB_USERNAME!,
+                process.env.DSB_PASSWORD!,
+                process.env.CLASS_NAME!,
+            )
+        );
+    }
+
     /**
      * removes all entries that are in the past
      */
     cleanPreviousEntries() {
-        // subtract a week from unix time
-        const now = Date.now() - 7 * 24 * 60 * 60 * 1000;
-
-        // remove entries that are in the past
         this.previousEntries = this.previousEntries.filter(
-            (entry) => !isDateInPast(entry.date, new Date(now)),
+            (entry) => !isDateInPast(entry.date),
         );
     }
 
@@ -80,8 +91,10 @@ export class ScheduleHandler {
         const timeTable = await this.dsb.getTimetable();
         const entries: Entry[] = timeTable.findByClassName(this.className);
         const newEntries = entries.filter((newEntry) => {
-            return !this.previousEntries.some((prevEntry) =>
-                entryEquals(newEntry, prevEntry),
+            return (
+                !this.previousEntries.some((prevEntry) =>
+                    entryEquals(newEntry, prevEntry),
+                ) && !isDateInPast(newEntry.date)
             );
         });
 

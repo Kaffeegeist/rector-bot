@@ -103,7 +103,11 @@ export class GuildHandler {
                 guildId,
                 {
                     "bot-channel-id": options.botChannelId,
-                    scheduleHandler: options.scheduleHandler?.toJSON(),
+                    scheduleHandler: new ScheduleHandler(
+                        process.env.DSB_USERNAME!,
+                        process.env.DSB_PASSWORD!,
+                        process.env.CLASS_NAME!,
+                    ),
                 },
             ]);
         });

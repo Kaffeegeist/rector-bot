@@ -1,6 +1,7 @@
 import { Client, Intents } from "discord.js";
 import { commandHandler, guildHandler } from "./commands";
 import { sendEntryEmbeds } from "./commands";
+import { ScheduleHandler } from "./handlers/schedulehandler";
 import { serializeCommands } from "./utility";
 require("dotenv").config();
 
@@ -14,6 +15,7 @@ client.on("ready", () => {
     console.log(`Now logged in as ${client.user?.tag}`);
 
     const serializedCommands = serializeCommands(commandHandler);
+    const scheduleHandler = ScheduleHandler.instance;
 
     guildHandler.guildOptionsMap.forEach(async (options, guildId) => {
         const guild = await client.guilds.fetch(guildId);
@@ -23,10 +25,10 @@ client.on("ready", () => {
             return;
 
         // send the commands to the channel when an update is received
-        options.scheduleHandler!.onUpdate((entries) =>
+        scheduleHandler!.onUpdate((entries) =>
             sendEntryEmbeds(channel, entries),
         );
-        await options.scheduleHandler!.update();
+        await scheduleHandler!.update();
 
         // register the serialized slash commands
         for (const command of serializedCommands) {
