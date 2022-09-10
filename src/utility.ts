@@ -2,11 +2,11 @@ import { CommandHandler } from "./handlers/commandhandler";
 
 /**
  * checks whether the date is after `past`
- * @param past the first date (the past)
  * @param date the second date (the given moment)
+ * @param past the first date (the past)
  * @returns whether the first date is before the second date
  */
-export function isDateInPast(past: Date = new Date(), date: Date): boolean {
+export function isDateInPast(date: Date, past: Date = new Date()): boolean {
     return past.setHours(0, 0, 0, 0) < date.setHours(0, 0, 0, 0);
 }
 

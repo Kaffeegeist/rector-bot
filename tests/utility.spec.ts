@@ -6,8 +6,8 @@ describe("Test Utility", () => {
     it("isDateInPast", () => {
         const future = new Date(2020, 1, 1);
         const past = new Date(2019, 1, 1);
-        expect(isDateInPast(past, future)).to.be.true;
-        expect(isDateInPast(future, past)).to.be.false;
+        expect(isDateInPast(future, past)).to.be.true;
+        expect(isDateInPast(past, future)).to.be.false;
     });
 
     it("serializeCommands", () => {

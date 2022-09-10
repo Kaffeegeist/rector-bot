@@ -63,12 +63,9 @@ export class ScheduleHandler {
      * removes all entries that are in the past
      */
     cleanPreviousEntries() {
-        // subtract a week from unix time
-        const now = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-        // remove entries that are in the past
         this.previousEntries = this.previousEntries.filter(
-            (entry) => !isDateInPast(entry.date, new Date(now)),
+            (entry) => !isDateInPast(entry.date),
         );
     }
 
@@ -80,8 +77,10 @@ export class ScheduleHandler {
         const timeTable = await this.dsb.getTimetable();
         const entries: Entry[] = timeTable.findByClassName(this.className);
         const newEntries = entries.filter((newEntry) => {
-            return !this.previousEntries.some((prevEntry) =>
-                entryEquals(newEntry, prevEntry),
+            return (
+                !this.previousEntries.some((prevEntry) =>
+                    entryEquals(newEntry, prevEntry),
+                ) && !isDateInPast(newEntry.date)
             );
         });
 
