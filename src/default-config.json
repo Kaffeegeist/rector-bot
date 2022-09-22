@@ -5,6 +5,7 @@
         "verlegung": "PERIOD. Stunde verlegung",
         "tausch": "PERIOD. Stunde statt OLD_SUBJECT jetzt NEW_SUBJECT",
         "betreuung": "PERIOD. Stunde betreuung",
+        "raum-vtr.":"PERIOD. Stunde statt OLD_ROOM jetzt NEW_ROOM",
         "default": "PERIOD. Stunde Es bleibt spannend"
     }
 }
