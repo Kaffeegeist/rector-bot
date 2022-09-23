@@ -1,11 +1,11 @@
 {
     "responses": {
-        "vertretung": "PERIOD. Stunde vertretung",
+        "vertretung": "PERIOD. Stunde vertretung jetzt NEW_SUBJECT in NEW_ROOM",
         "entfall": "PERIOD. Stunde OLD_SUBJECT entfällt",
-        "verlegung": "PERIOD. Stunde verlegung",
+        "verlegung": "PERIOD. Stunde verlegung jetzt NEW_SUBJECT in NEW_ROOM",
         "tausch": "PERIOD. Stunde statt OLD_SUBJECT jetzt NEW_SUBJECT",
-        "betreuung": "PERIOD. Stunde betreuung",
-        "raum-vtr.": "PERIOD. Stunde statt OLD_ROOM jetzt NEW_ROOM",
+        "betreuung": "PERIOD. Stunde betreuung jetzt NEW_SUBJECT in NEW_ROOM",
+        "raum-vtr.": "PERIOD. Stunde Raum Vertretung statt OLD_ROOM jetzt NEW_ROOM",
         "default": "PERIOD. Stunde Es bleibt spannend"
     }
 }
