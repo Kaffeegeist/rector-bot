@@ -8,7 +8,7 @@ describe("Test Config", () => {
         expect(c.responseMap.size).to.be.greaterThan(0);
         expect(c.responseMap.get("test")).to.be.undefined;
         expect(c.responseMap.get("vertretung")).to.equal(
-            "PERIOD. Stunde vertretung",
+            "PERIOD. Stunde Vertretung jetzt NEW_SUBJECT in NEW_ROOM",
         );
 
         const entry = new Entry(
@@ -18,12 +18,12 @@ describe("Test Config", () => {
             1,
             "Vertretung",
             "test",
+            "E",
             "test",
-            "test",
-            "test",
+            "312",
             "test",
         );
 
-        expect(c.getResponse(entry)).to.equal("1. Stunde vertretung");
+        expect(c.getResponse(entry)).to.equal("1. Stunde Vertretung jetzt E in 312");
     });
 });
