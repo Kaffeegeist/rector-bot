@@ -7,7 +7,10 @@ function entryEquals(e1: Entry, e2: Entry) {
     return (
         e1.description === e2.description &&
         e1.day === e2.day &&
-        e1.period === e2.period
+        e1.period === e2.period &&
+        e1.oldSubject === e2.oldSubject &&
+        e1.newSubject === e2.newSubject &&
+        e1.oldRoom === e2.newRoom
     );
 }
 
