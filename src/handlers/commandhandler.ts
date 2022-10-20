@@ -81,7 +81,6 @@ export class CommandHandler {
      * ```
      */
     async handleCommand(client: Client, interaction: CommandInteraction) {
-        if (!interaction.isCommand()) return;
         const commandName = interaction.commandName;
 
         // check whether a callback for this command has already been declared
