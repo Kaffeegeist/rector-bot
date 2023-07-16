@@ -2,7 +2,7 @@
     <img src="./media/icon.png" width="300px">
     <h1>Rector</h1>
     <img src="https://img.shields.io/github/license/Kaffeegeist/rector-bot">
-    <img src="https://img.shields.io/github/workflow/status/Kaffeegeist/rector-bot/ci?label=ci">
+    <img src="https://img.shields.io/github/actions/workflow/status/Kaffeegeist/rector-bot/ci.yml?branch=main&label=ci">
     <p>A discord bot for staying up to date with the <a href="https://dsbmobile.de">dsbmobile</a> substitution plan</p>
 </div>
 
